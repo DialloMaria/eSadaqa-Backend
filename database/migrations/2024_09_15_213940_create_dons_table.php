@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -13,6 +14,13 @@ return new class extends Migration
     {
         Schema::create('dons', function (Blueprint $table) {
             $table->id();
+            $table->string('libelle');
+            $table->text('description');
+            $table->enum('categorie', ['monetaire', 'produit']);
+            $table->enum('status', ['en_attente', 'approuvé', 'rejeté']);
+            $table->string('adresse');
+            $table->string('image');
+            $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

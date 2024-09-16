@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Donateur extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 }
