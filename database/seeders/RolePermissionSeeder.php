@@ -34,6 +34,12 @@ class RolePermissionSeeder extends Seeder
             'edit organisation',
             'delete organisation',
 
+            // Beneficiaire permissions
+            'view beneficiaire',
+            'create beneficiaire',
+            'edit beneficiaire',
+            'delete beneficiaire',
+
             // Produit permissions
             'create produit',
             'view produit',
@@ -41,8 +47,8 @@ class RolePermissionSeeder extends Seeder
             'delete produit',
 
             // // Notification permissions
-            // 'view notification',
-            // 'delete notification',
+            'view notification',
+            'delete notification',
         ];
 
         // Création des permissions dans la base de données

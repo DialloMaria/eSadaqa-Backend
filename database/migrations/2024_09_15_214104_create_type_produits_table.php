@@ -15,9 +15,9 @@ return new class extends Migration
         Schema::create('type_produits', function (Blueprint $table) {
             $table->id();
             $table->string('libelle');
-            $table->integer('quantite');
-            $table->decimal('montant', 8, 2);
-            $table->string('mode_paiement');
+            $table->integer('quantite')->nullable();
+            $table->decimal('montant', 8, 2)->nullable();
+            $table->string('mode_paiement')->nullable();
             $table->foreignIdFor(Don::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });

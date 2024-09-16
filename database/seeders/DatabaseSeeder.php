@@ -2,9 +2,22 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Don;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
+use App\Models\Donateur;
+use App\Models\TypeProduit;
+use App\Models\Beneficiaire;
+use App\Models\Organisation;
+use Database\Seeders\DonSeeder;
 use Illuminate\Database\Seeder;
+use Database\Seeders\UserSeeder;
+use Illuminate\Support\Facades\DB;
+use Database\Seeders\DonateurSeeder;
+use Database\Seeders\TypeProduitSeeder;
+use Database\Seeders\BeneficiaireSeeder;
+use Database\Seeders\OrganisationSeeder;
+use Database\Seeders\RolePermissionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +26,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Désactiver la vérification des clés étrangères pour éviter les erreurs
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Truncate des tables
+        User::truncate();
+        Don::truncate();
+        TypeProduit::truncate();
+        Donateur::truncate();
+        Organisation::truncate();
+        Beneficiaire::truncate();
+
+        // Réactiver la vérification des clés étrangères
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+
+        // User::factory(10)->create();
+        $this->call([
+            RolePermissionSeeder::class,
+            UserSeeder::class,
+            DonSeeder::class,
+            TypeProduitSeeder::class,
+            DonateurSeeder::class,
+            OrganisationSeeder::class,
+            BeneficiaireSeeder::class,
         ]);
     }
 }
