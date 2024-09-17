@@ -60,7 +60,7 @@ class RolePermissionSeeder extends Seeder
         // Créer les rôles et leur assigner des permissions
         $adminRole = Role::create(['name' => 'admin']);
         $organisationRole = Role::create(['name' => 'organisation']);
-        $donateurRole = Role::create(['name' => 'donateur']);
+        $donateurRole =Role::create(['name' => 'donateur']);
         $beneficiaireRole = Role::create(['name' => 'beneficiaire']);
         $userRole = Role::create(['name' => 'user']);
 

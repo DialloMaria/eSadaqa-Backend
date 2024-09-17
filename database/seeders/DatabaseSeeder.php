@@ -13,10 +13,12 @@ use Database\Seeders\DonSeeder;
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use Database\Seeders\DonateurSeeder;
 use Database\Seeders\TypeProduitSeeder;
 use Database\Seeders\BeneficiaireSeeder;
 use Database\Seeders\OrganisationSeeder;
+use Spatie\Permission\Models\Permission;
 use Database\Seeders\RolePermissionSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -36,6 +38,8 @@ class DatabaseSeeder extends Seeder
         Donateur::truncate();
         Organisation::truncate();
         Beneficiaire::truncate();
+        Role::truncate();
+        Permission::truncate();
 
         // Réactiver la vérification des clés étrangères
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
