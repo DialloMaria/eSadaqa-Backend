@@ -26,6 +26,6 @@ Route::get ('don/affichage' , [DonController::class, 'index']);
 
 Route::post ('don/ajout' , [DonController::class, 'store']);
 
-Route::put ('don/modification/{don}' , [DonController::class, 'update']);
+Route::post ('don/modification/{don}' , [DonController::class, 'update']);
 
 Route::delete ('don/suppression/{don}' , [DonController::class, 'destroy']);

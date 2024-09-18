@@ -44,8 +44,7 @@ class DonController extends Controller
             $image = $request->file( 'image' );
             $don->image = $image->store( 'images', 'public' );
         }
-        // $don->created_by = Auth::id();
-        $don->created_by = 3 ;
+        $don->created_by = Auth::id();
         $don->save();
 
         return $this->customJsonResponse("Don créé avec succès", $don, Response::HTTP_CREATED);
@@ -73,8 +72,28 @@ class DonController extends Controller
      */
     public function update(UpdateDonRequest $request, Don $don)
     {
-        //
+        // Valider les données
+        $data = $request->validated();
+
+        // Vérifier si une nouvelle image est téléchargée
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $don->image = $image->store('images', 'public');
+        }
+
+        // Mettre à jour les autres champs
+        $don->fill($data);
+
+        // Mettre à jour le champ modified_by
+        $don->modified_by = Auth::id();
+
+        // Enregistrer les modifications
+        $don->save();
+
+        // Réponse de succès
+        return $this->customJsonResponse("Don mis à jour avec succès", $don);
     }
+
 
     /**
      * Remove the specified resource from storage.
