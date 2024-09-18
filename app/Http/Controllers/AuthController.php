@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Donateur;
+use App\Models\Organisation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use PHPOpenSourceSaver\JWTAuth\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -19,12 +19,12 @@ class AuthController extends Controller
         $validatedData = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:6',
             'adresse' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:15|unique:users',
+            'telephone' => 'nullable|string|max:15',
             'nomstructure' => 'required|string|max:255',
-            'emailstructure' => 'required|string|email|max:255|unique:donateurs',
+            'emailstructure' => 'required|string|email|max:255',
             'description' => 'nullable|string',
             'typestructure' => 'required|in:micro,macro',
             'siege' => 'required|string|max:255',
@@ -35,12 +35,12 @@ class AuthController extends Controller
 
 
         // Vérification si la validation a échoué
-        if ($validatedData->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validatedData->errors(),
-            ], 422);
-        }
+        // if ($validatedData->fails()) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'errors' => $validatedData->errors(),
+        //     ], 422);
+        // }
 
 
         // Création de l'utilisateur
@@ -76,7 +76,7 @@ class AuthController extends Controller
         // Réponse JSON personnalisée
         return response()->json([
             'success' => true,
-            'message' => "Utilisateur créé avec succès",
+            'message' => "Hello $user->prenom , Votre inscription c fait avec succès",
             'user' => [
                 'id' => $user->id,
                 'nom' => $user->nom,
@@ -84,28 +84,105 @@ class AuthController extends Controller
                 'adresse' => $user->adresse,
                 'telephone' => $user->telephone,
                 'email' => $user->email,
-                'token' => JWTAuth::fromUser($user), // Génération d'un token JWT pour l'utilisateur
                 'roles' => $roles // Inclure les rôles dans la réponse
+            ],
+            'structure' => [
+                'id' => $donateur->id,
+                'nomstructure' => $donateur->nomstructure,
+                'emailstructure' => $donateur->emailstructure,
+                'description' => $donateur->description,
+                'typestructure' => $donateur->typestructure,
+                'siege' => $donateur->siege,
+                'logo' => $donateur->logo,
+                'date_creation' => $donateur->date_creation,
+                'recepisse' => $donateur->recepisse,
+                'password' => Hash::make($request->password)// Mot de passe non affiché pour sécurité''
             ]
-            // 'structure' => [
-            //     'id' => $donateur->id,
-            //     'nomstructure' => $donateur->nomstructure,
-            //     'emailstructure' => $donateur->emailstructure,
-            //     'description' => $donateur->description,
-            //     'typestructure' => $donateur->typestructure,
-            //     'siege' => $donateur->siege,
-            //     'logo' => $donateur->logo,
-            //     'date_creation' => $donateur->date_creation,
-            //     'recepisse' => $donateur->recepisse,
-            //     'password' => Hash::make($request->password)// Mot de passe non affiché pour sécurité''
-            // ]
         ], 201);
     }
 
 
-    //Register pour l'organisation
-    
+    //Register pour les organisation
+    public function registerOrganisation(Request $request)
+    {
+        //Validation des données
+        $validatedData = $request->validate([
+            // 'nom' => 'required|string|max:255',
+            // 'prenom' => 'required|string|max:255',
+            // 'email' => 'required|string|email|max:255',
+            // 'password' => 'required|string|min:6',
+            // 'adresse' => 'nullable|string|max:255',
+            // 'telephone' => 'nullable|string|max:15',
 
+            // 'nomstructure' => 'required|string|max:255',
+            // 'emailstructure' => 'required|string|email|max:255',
+            // 'fondateur' => 'required|string|max:100',
+            // 'description' => 'nullable|string',
+            // 'siege' => 'required|string|max:255',
+            // 'logo' => 'nullable|string',
+            // 'date_creation' => 'required|date',
+            // 'recepisse' => 'required|string|max:255',
+        ]);
+
+        // Création de l'utilisateur
+        $user = User::create([
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'adresse' => $request->adresse,
+            'telephone' => $request->telephone ?? null,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Assignation du rôle donateur
+        $user->assignRole('organisation');
+
+        //Mise en place des infos suplementaire
+        $organisation = Organisation::create([
+            'nomstructure' => $request-> nomstructure,
+            'emailstructure' => $request-> emailstructure,
+            'fondateur' => $request-> fondateur,
+            'siege' => $request->siege,
+            'logo' => $request->logo ?? null,
+            'date_creation' => $request-> date_creation,
+            'recepisse' => $request-> recepisse,
+            'description' => $request-> description,
+            'password' => Hash::make($request->password),
+            'user_id' => $user->id,  // Lien avec la table users
+        ]);
+
+        // Obtenez les rôles de l'utilisateur
+        $roles = $user->getRoleNames();
+
+
+        // Réponse JSON personnalisée
+        return response()->json([
+            'success' => true,
+            'message' => "Hello $user->prenom , Votre inscription c fait avec succès",
+            'user' => [
+                'id' => $user->id,
+                'nom' => $user->nom,
+                'prenom' => $user->prenom,
+                'adresse' => $user->adresse,
+                'telephone' => $user->telephone,
+                'email' => $user->email,
+                'roles' => $roles // Inclure les rôles dans la réponse
+            ],
+            'Organisation' => [
+                'id' => $organisation->id,
+                'nomstructure' => $organisation->nomstructure,
+                'emailstructure' => $organisation->emailstructure,
+                'description' => $organisation->description,
+                'typestructure' => $organisation->typestructure,
+                'siege' => $organisation->siege,
+                'logo' => $organisation->logo,
+                'date_creation' => $organisation->date_creation,
+                'recepisse' => $organisation->recepisse,
+                'password' => Hash::make($request->password)// Mot de passe non affiché pour sécurité''
+            ]
+        ], 201);
+    }
 
 
 }
+

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nomstructure');
             $table->string('emailstructure')->nullable()->unique();
             $table->string('siege');
+            $table->string('description')->nullable();
             $table->string('fondateur');
             $table->string('logo')->nullable();
             $table->date('date_creation');
