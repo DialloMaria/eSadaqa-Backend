@@ -11,7 +11,7 @@ class StoreDonRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreDonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'libelle' => 'required|string|max:255',
+            'description' => 'required|string',
+            'categorie' => 'required|in:monetaire,produit',
+            'status' => 'in:en_attente,approuvé,rejeté',
+            'adresse' => 'required|string|max:255',
+            'image' => 'nullable|string|max:255', // URL de l'image
         ];
     }
 }

@@ -22,4 +22,10 @@ Route::post('/login', [AuthController::class, 'login']);
 
 //////////////////////////////////////////////////////////////// DONS ////////////////////////////////////////////////////////////////
 
-Route::post ('don/affichage' , [DonController::class, 'index']);
+Route::get ('don/affichage' , [DonController::class, 'index']);
+
+Route::post ('don/ajout' , [DonController::class, 'store']);
+
+Route::put ('don/modification/{don}' , [DonController::class, 'update']);
+
+Route::delete ('don/suppression/{don}' , [DonController::class, 'destroy']);

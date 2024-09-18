@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Don;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreDonRequest;
 use App\Http\Requests\UpdateDonRequest;
-use App\Models\Don;
 
 class DonController extends Controller
 {
@@ -13,8 +15,11 @@ class DonController extends Controller
      */
     public function index()
     {
-        $dons = Don::all();
-        return response()->json($dons);
+        // $dons = Don::all();
+        // return response()->json($dons);
+
+        $don = Don::with(['creator', 'modifier'])->get();
+        return $this->customJsonResponse("Don retrieved successfully", $don);
     }
 
     /**
@@ -30,7 +35,21 @@ class DonController extends Controller
      */
     public function store(StoreDonRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        // Création d'une nouvelle instance de SousDomaine
+        $don = new Don();
+        $don->fill( $request->validated() );
+        if ( $request->hasFile( 'image' ) ) {
+            $image = $request->file( 'image' );
+            $don->image = $image->store( 'images', 'public' );
+        }
+        // $don->created_by = Auth::id();
+        $don->created_by = 3 ;
+        $don->save();
+
+        return $this->customJsonResponse("Don créé avec succès", $don, Response::HTTP_CREATED);
+
     }
 
     /**
