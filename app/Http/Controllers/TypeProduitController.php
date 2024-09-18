@@ -13,7 +13,9 @@ class TypeProduitController extends Controller
      */
     public function index()
     {
-        //
+        $produit = TypeProduit::all();
+        // $don = TytpeProduit::with(['creator', 'modifier'])->get();
+        return $this->customJsonResponse("Don retrieved successfully", $produit);
     }
 
     /**
@@ -29,7 +31,14 @@ class TypeProduitController extends Controller
      */
     public function store(StoreTypeProduitRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        // Création d'une nouvelle instance de SousDomaine
+        $produit = new TypeProduit();
+        $produit->fill( $request->validated() );
+        $produit->save();
+
+        return $this->customJsonResponse("Type produit créé avec succès", $produit, 201);
     }
 
     /**

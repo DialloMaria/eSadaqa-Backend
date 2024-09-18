@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DonController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TypeProduitController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -29,3 +30,15 @@ Route::post ('don/ajout' , [DonController::class, 'store']);
 Route::post ('don/modification/{don}' , [DonController::class, 'update']);
 
 Route::delete ('don/suppression/{don}' , [DonController::class, 'destroy']);
+
+
+
+//////////////////////////////////////////////////////////////// TYPE PRODUITS ////////////////////////////////////////////////////////////////
+
+Route::get ('produit/affichage' , [TypeProduitController::class, 'index']);
+
+Route::post ('produit/ajout' , [TypeProduitController::class, 'store']);
+
+Route::post ('produit/modification/{produit}' , [TypeProduitController::class, 'update']);
+
+Route::delete ('produit/suppression/{produit}' , [TypeProduitController::class, 'destroy']);
