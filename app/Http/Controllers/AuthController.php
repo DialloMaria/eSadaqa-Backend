@@ -268,5 +268,67 @@ class AuthController extends Controller
         ], 201);
     }
 
+    // LOGIN
+    public function login(Request $request)
+    {
+        // Validation des données
+        $validator = validator($request->all(), [
+            'email' => ['required', 'email', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $credentials = $request->only(['email', 'password']);
+
+        // Tentative de connexion avec les informations d'identification
+        if (!$token = auth()->guard('api')->attempt($credentials)) {
+            return response()->json([
+                'message' => 'Identifiants de connexion invalides',
+            ], 401);
+        }
+
+        // Obtenez l'utilisateur connecté
+        $user = auth()->guard('api')->user();
+
+        // Obtenez les rôles de l'utilisateur
+        $roles = $user->getRoleNames();
+
+        // Vérifiez le rôle de l'utilisateur et retournez une réponse en fonction de son rôle
+        if ($roles->contains('admin')) {
+            return $this->respondWithToken($token, $user, 'admin');
+        } elseif ($roles->contains('donateur')) {
+            return $this->respondWithToken($token, $user, 'donateur');
+        } elseif ($roles->contains('organisation')) {
+            return $this->respondWithToken($token, $user, 'organisation');
+        } elseif ($roles->contains('beneficiaire')) {
+            return $this->respondWithToken($token, $user, 'beneficiaire');
+        } else {
+            return response()->json([
+                'message' => 'Rôle non reconnu pour cet utilisateur',
+            ], 403);
+        }
+    }
+
+    /**
+     * Répondre avec un jeton et les informations de l'utilisateur
+     */
+    protected function respondWithToken($token, $user, $role)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'role' => $role, // Inclure le rôle dans la réponse
+            'user' => $user,
+            'expires_in' => auth()->guard('api')->factory()->getTTL() * 60, // Expiration du token en secondes
+        ]);
+    }
+
+    
+
 }
 

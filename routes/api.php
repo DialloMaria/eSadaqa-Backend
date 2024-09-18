@@ -15,3 +15,5 @@ Route::post('/register/organisation', [AuthController::class, 'registerOrganisat
 
 Route::post('/register/beneficiaire', [AuthController::class, 'registerBeneficiaire']);
 
+
+Route::post('/login', [AuthController::class, 'login']);
