@@ -98,8 +98,25 @@ class DonController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Don $don)
+    public function destroy($id)
     {
-        //
-    }
+        $don = don::find($id);
+
+            try {
+                if (!$don) {
+                    return response()->json(['message' => 'don non trouvé'], 404);
+                }
+
+                $don->delete();
+                return $this->customJsonResponse('don supprimé avec succès', $don);
+
+            } catch (Exception $e) {
+                return response()->json([
+                    'message' => 'Erreur lors de la suppression de l\'don',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+
+    
 }
