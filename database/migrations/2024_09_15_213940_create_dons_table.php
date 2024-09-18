@@ -20,7 +20,11 @@ return new class extends Migration
             $table->enum('status', ['en_attente', 'approuvé', 'rejeté']);
             $table->string('adresse');
             $table->string('image');
-            $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('modified_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('modified_by')->references('id')->on('users')->onDelete('set null');
+            // $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\TypeProduit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Don extends Model
 {
@@ -14,5 +16,17 @@ class Don extends Model
     public function typeProduits()
     {
         return $this->hasMany(TypeProduit::class);
+    }
+
+    // Relation avec le modèle User (créateur)
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // Relation avec le modèle User (modificateur)
+    public function modifier()
+    {
+        return $this->belongsTo(User::class, 'modified_by');
     }
 }

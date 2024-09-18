@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DonController;
 use App\Http\Controllers\AuthController;
 
 Route::get('/user', function (Request $request) {
@@ -17,3 +18,8 @@ Route::post('/register/beneficiaire', [AuthController::class, 'registerBeneficia
 
 
 Route::post('/login', [AuthController::class, 'login']);
+
+
+//////////////////////////////////////////////////////////////// DONS ////////////////////////////////////////////////////////////////
+
+Route::post ('don/affichage' , [DonController::class, 'index']);

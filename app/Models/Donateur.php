@@ -10,3 +10,4 @@ class Donateur extends Model
     use HasFactory;
     protected $guarded = [];
 }
+
