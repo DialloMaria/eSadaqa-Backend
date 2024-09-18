@@ -19,9 +19,11 @@ return new class extends Migration
             $table->string('emailstructure')->nullable()->unique();
             $table->text('description');
             $table->string('logo')->nullable();
+            $table->string('adresse')->nullable();
             $table->string('fondateur');
             $table->date('date_creation');
             $table->string('recepisse');
+            $table->string('password')->nullable();
             $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
