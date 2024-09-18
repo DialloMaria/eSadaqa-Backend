@@ -251,20 +251,20 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'roles' => $roles // Inclure les rôles dans la réponse
             ],
-            // 'beneficiaire' => [
-            //     'id' => $beneficiaire->id,
-            //     'nomstructure' => $beneficiaire->nomstructure,
-            //     'emailstructure' => $beneficiaire->emailstructure,
-            //     'description' => $beneficiaire->description,
-            //     'telstructure' => $beneficiaire->telstructure,
-            //     'fondateur' => $beneficiaire->fondateur,
-            //     'typestructure' => $beneficiaire->typestructure,
-            //     'adresse' => $beneficiaire->adresse,
-            //     'logo' => $beneficiaire->logo,
-            //     'date_creation' => $beneficiaire->date_creation,
-            //     'recepisse' => $beneficiaire->recepisse,
-            //     'password' => Hash::make($request->password)// Mot de passe non affiché pour sécurité''
-            // ]
+            'beneficiaire' => [
+                'id' => $beneficiaire->id,
+                'nomstructure' => $beneficiaire->nomstructure,
+                'emailstructure' => $beneficiaire->emailstructure,
+                'description' => $beneficiaire->description,
+                'telstructure' => $beneficiaire->telstructure,
+                'fondateur' => $beneficiaire->fondateur,
+                'typestructure' => $beneficiaire->typestructure,
+                'adresse' => $beneficiaire->adresse,
+                'logo' => $beneficiaire->logo,
+                'date_creation' => $beneficiaire->date_creation,
+                'recepisse' => $beneficiaire->recepisse,
+                'password' => Hash::make($request->password)// Mot de passe non affiché pour sécurité''
+            ]
         ], 201);
     }
 

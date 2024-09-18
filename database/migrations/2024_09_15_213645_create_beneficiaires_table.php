@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('beneficiaires', function (Blueprint $table) {
             $table->id();
             $table->string('nomstructure');
-            $table->string('telstructure')->nullable()->unique();
+            $table->integer('telstructure')->nullable()->unique();
             $table->string('emailstructure')->nullable()->unique();
             $table->text('description');
             $table->string('logo')->nullable();
