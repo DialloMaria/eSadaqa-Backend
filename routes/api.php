@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DonController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\TypeProduitController;
 
 Route::get('/user', function (Request $request) {
@@ -42,3 +43,16 @@ Route::post ('produit/ajout' , [TypeProduitController::class, 'store']);
 Route::post ('produit/modification/{produit}' , [TypeProduitController::class, 'update']);
 
 Route::delete ('produit/suppression/{produit}' , [TypeProduitController::class, 'destroy']);
+
+
+
+
+//////////////////////////////////////////////////////////////// RESERVATIONS ////////////////////////////////////////////////////////////////
+
+Route::get ('reservation/affichage' , [ReservationController::class, 'index']);
+
+Route::post ('reservation/ajout' , [ReservationController::class, 'store']);
+
+Route::post ('reservation/modification/{reservation}' , [ReservationController::class, 'update']);
+
+Route::delete ('reservation/suppression/{reservation}' , [ReservationController::class, 'destroy']);

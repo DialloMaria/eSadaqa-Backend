@@ -1,6 +1,8 @@
 <?php
 
-use App\Models\User;
+use App\Models\Don;
+use App\Models\Beneficiaire;
+use App\Models\Organisation;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -12,19 +14,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dons', function (Blueprint $table) {
+        Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->string('libelle');
             $table->text('description');
-            $table->enum('categorie', ['monetaire', 'produit']);
-            $table->enum('status', ['en_attente', 'reservé', 'distribué']);
-            $table->string('adresse');
-            $table->string('image');
+            $table->foreignIdFor(Don::class)->nullable()->constrained()->onDelete('cascade');
+            // $table->foreignIdFor(Organisation::class)->nullable()->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Beneficiaire::class)->nullable()->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('modified_by')->references('id')->on('users')->onDelete('set null');
-            // $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dons');
+        Schema::dropIfExists('reservations');
     }
 };

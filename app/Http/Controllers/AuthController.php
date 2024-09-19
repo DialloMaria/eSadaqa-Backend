@@ -58,7 +58,7 @@ class AuthController extends Controller
         $user->assignRole('donateur');
 
         //Mise en place des infos suplementaire
-        $donateur = Donateur::create([
+        $donateur = Donateur::create([      
             'nomstructure' => $request-> nomstructure,
             'emailstructure' => $request-> emailstructure,
             'description' => $request->description ?? null,
@@ -78,15 +78,8 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => "Hello $user->prenom , Votre inscription c fait avec succès",
-            'user' => [
-                'id' => $user->id,
-                'nom' => $user->nom,
-                'prenom' => $user->prenom,
-                'adresse' => $user->adresse,
-                'telephone' => $user->telephone,
-                'email' => $user->email,
-                'roles' => $roles // Inclure les rôles dans la réponse
-            ],
+            'user' => $user,
+            'roles' => $roles, // Inclure les rôles dans la réponse,
             'structure' => [
                 'id' => $donateur->id,
                 'nomstructure' => $donateur->nomstructure,
@@ -328,7 +321,7 @@ class AuthController extends Controller
         ]);
     }
 
-    
+
 
 }
 

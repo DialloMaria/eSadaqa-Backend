@@ -27,7 +27,7 @@ class DonSeeder extends Seeder
                 'libelle' => 'Don monétaire pour l\'éducation',
                 'description' => 'Un don en argent pour financer l\'éducation des enfants défavorisés.',
                 'categorie' => 'monetaire',
-                'status' => 'approuvé',
+                'status' => 'reservé',
                 'adresse' => '5 Rue de la Paix, Lyon',
                 'image' => 'https://example.com/images/don2.jpg',
                 'created_by' => 2, // ID d'un utilisateur existant
@@ -36,7 +36,7 @@ class DonSeeder extends Seeder
                 'libelle' => 'Don de vêtements',
                 'description' => 'Des vêtements pour les sans-abris durant l\'hiver.',
                 'categorie' => 'produit',
-                'status' => 'rejeté',
+                'status' => 'distribué',
                 'adresse' => '25 Avenue de la Fraternité, Marseille',
                 'image' => 'https://example.com/images/don3.jpg',
                 'created_by' => 1, // ID d'un utilisateur existant
