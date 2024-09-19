@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TypeProduit;
+use Illuminate\Http\Response;
 use App\Http\Requests\StoreTypeProduitRequest;
 use App\Http\Requests\UpdateTypeProduitRequest;
-use App\Models\TypeProduit;
 
 class TypeProduitController extends Controller
 {
@@ -33,7 +34,7 @@ class TypeProduitController extends Controller
     {
         $data = $request->validated();
 
-        // Création d'une nouvelle instance de SousDomaine
+        // Création d'une nouvelle instance de produit
         $produit = new TypeProduit();
         $produit->fill( $request->validated() );
         $produit->save();
@@ -60,16 +61,49 @@ class TypeProduitController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTypeProduitRequest $request, TypeProduit $typeProduit)
+    public function update(UpdateTypeProduitRequest $request, TypeProduit $typeProduit, $id)
     {
-        //
+        $typeProduit = TypeProduit::find($id);
+
+        if (!$typeProduit) {
+            return response()->json(['message' => 'Don introuvable'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = $request->validate([
+            'libelle' => 'sometimes|required|string|max:255',
+            'quantite' => 'nullable|integer',
+            'montant' => 'nullable|numeric',
+            'mode_paiement' => 'nullable|string|max:255',
+            'don_id' => 'required|exists:dons,id',
+        ]);
+
+        $typeProduit->update($data);
+
+        // return response()->json($typeProduit, Response::HTTP_OK);
+        return $this->customJsonResponse("Type produit modifié avec succès", $typeProduit   , 201);
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TypeProduit $typeProduit)
+    public function destroy($id)
     {
-        //
-    }
+        $typeProduit = TypeProduit::find($id);
+
+            try {
+                if (!$typeProduit) {
+                    return response()->json(['message' => 'typeProduit non trouvé'], 404);
+                }
+
+                $typeProduit->delete();
+                return $this->customJsonResponse('typeProduit supprimé avec succès', $typeProduit);
+
+            } catch (Exception $e) {
+                return response()->json([
+                    'message' => 'Erreur lors de la suppression de l\'don',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
 }
