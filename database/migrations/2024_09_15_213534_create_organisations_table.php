@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->date('date_creation');
             $table->string('recepisse');
-            $table->string('password');
             $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });

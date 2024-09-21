@@ -41,7 +41,7 @@ class DonateurSeeder extends Seeder
                     'logo' => 'logo1.png',
                     'date_creation' => '2022-01-01',
                     'recepisse' => 'REC-1234',
-                    'password' => Hash::make('password'),
+                    // 'password' => Hash::make('password'),
                     'user_id' => 3,
                 ]);
     }

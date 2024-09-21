@@ -58,7 +58,7 @@ class AuthController extends Controller
         $user->assignRole('donateur');
 
         //Mise en place des infos suplementaire
-        $donateur = Donateur::create([      
+        $donateur = Donateur::create([
             'nomstructure' => $request-> nomstructure,
             'emailstructure' => $request-> emailstructure,
             'description' => $request->description ?? null,
@@ -67,7 +67,7 @@ class AuthController extends Controller
             'logo' => $request->logo ?? null,
             'date_creation' => $request-> date_creation,
             'recepisse' => $request-> recepisse,
-            'password' => Hash::make($request->password),
+            // 'password' => Hash::make($request->password),
             'user_id' => $user->id,  // Lien avec la table users
         ]);
 
@@ -101,21 +101,21 @@ class AuthController extends Controller
     {
         //Validation des données
         $validatedData = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:6',
-            'adresse' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:15',
+            // 'nom' => 'required|string|max:255',
+            // 'prenom' => 'required|string|max:255',
+            // 'email' => 'required|string|email|max:255',
+            // 'password' => 'required|string|min:6',
+            // 'adresse' => 'nullable|string|max:255',
+            // 'telephone' => 'nullable|string|max:15',
 
-            'nomstructure' => 'required|string|max:255',
-            'emailstructure' => 'required|string|email|max:255',
-            'fondateur' => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'siege' => 'required|string|max:255',
-            'logo' => 'nullable|string',
-            'date_creation' => 'required|date',
-            'recepisse' => 'required|string|max:255',
+            // 'nomstructure' => 'required|string|max:255',
+            // 'emailstructure' => 'required|string|email|max:255',
+            // 'fondateur' => 'required|string|max:100',
+            // 'description' => 'nullable|string',
+            // 'siege' => 'required|string|max:255',
+            // 'logo' => 'nullable|string',
+            // 'date_creation' => 'required|date',
+            // 'recepisse' => 'required|string|max:255',
         ]);
 
         // Création de l'utilisateur
@@ -141,7 +141,7 @@ class AuthController extends Controller
             'date_creation' => $request-> date_creation,
             'recepisse' => $request-> recepisse,
             'description' => $request-> description,
-            'password' => Hash::make($request->password),
+            // 'password' => Hash::make($request->password),
             'user_id' => $user->id,  // Lien avec la table users
         ]);
 
@@ -211,7 +211,7 @@ class AuthController extends Controller
         ]);
 
         // Assignation du rôle donateur
-        $user->assignRole('organisation');
+        $user->assignRole('beneficiaire');
 
         //Mise en place des infos suplementaire
         $beneficiaire = Beneficiaire::create([
@@ -223,7 +223,7 @@ class AuthController extends Controller
             'date_creation' => $request-> date_creation,
             'recepisse' => $request-> recepisse,
             'description' => $request-> description,
-            'password' => Hash::make($request->password),
+            // 'password' => Hash::make($request->password),
             'user_id' => $user->id,  // Lien avec la table users
         ]);
 
@@ -262,6 +262,51 @@ class AuthController extends Controller
     }
 
     // LOGIN
+    // public function login(Request $request)
+    // {
+    //     // Validation des données
+    //     $validator = validator($request->all(), [
+    //         'email' => ['required', 'email', 'string'],
+    //         'password' => ['required', 'string'],
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'errors' => $validator->errors(),
+    //         ], 422);
+    //     }
+
+    //     $credentials = $request->only(['email', 'password']);
+
+    //     // Tentative de connexion avec les informations d'identification
+    //     if (!$token = auth()->guard('api')->attempt($credentials)) {
+    //         return response()->json([
+    //             'message' => 'Identifiants de connexion invalides',
+    //         ], 401);
+    //     }
+
+    //     // Obtenez l'utilisateur connecté
+    //     $user = auth()->guard('api')->user();
+
+    //     // Obtenez les rôles de l'utilisateur
+    //     $roles = $user->getRoleNames();
+
+    //     // Vérifiez le rôle de l'utilisateur et retournez une réponse en fonction de son rôle
+    //     if ($roles->contains('admin')) {
+    //         return $this->respondWithToken($token, $user, 'admin');
+    //     } elseif ($roles->contains('donateur')) {
+    //         return $this->respondWithToken($token, $user, 'donateur');
+    //     } elseif ($roles->contains('organisation')) {
+    //         return $this->respondWithToken($token, $user, 'organisation');
+    //     } elseif ($roles->contains('beneficiaire')) {
+    //         return $this->respondWithToken($token, $user, 'beneficiaire');
+    //     } else {
+    //         return response()->json([
+    //             'message' => 'Rôle non reconnu pour cet utilisateur',
+    //         ], 403);
+    //     }
+    // }
+
     public function login(Request $request)
     {
         // Validation des données
@@ -276,35 +321,34 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $credentials = $request->only(['email', 'password']);
-
-        // Tentative de connexion avec les informations d'identification
-        if (!$token = auth()->guard('api')->attempt($credentials)) {
+        // Vérifier si l'utilisateur existe
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
             return response()->json([
-                'message' => 'Identifiants de connexion invalides',
-            ], 401);
+                'message' => 'Utilisateur non trouvé',
+            ], 404); // User not found
         }
 
-        // Obtenez l'utilisateur connecté
-        $user = auth()->guard('api')->user();
+        // Vérifier si le mot de passe est correct
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Mot de passe incorrect',
+            ], 401); // Incorrect password
+        }
 
-        // Obtenez les rôles de l'utilisateur
+        // Authentification réussie, générer le token
+        $token = auth()->guard('api')->login($user);
+
+        // Obtenir les rôles de l'utilisateur
         $roles = $user->getRoleNames();
 
-        // Vérifiez le rôle de l'utilisateur et retournez une réponse en fonction de son rôle
-        if ($roles->contains('admin')) {
-            return $this->respondWithToken($token, $user, 'admin');
-        } elseif ($roles->contains('donateur')) {
-            return $this->respondWithToken($token, $user, 'donateur');
-        } elseif ($roles->contains('organisation')) {
-            return $this->respondWithToken($token, $user, 'organisation');
-        } elseif ($roles->contains('beneficiaire')) {
-            return $this->respondWithToken($token, $user, 'beneficiaire');
-        } else {
-            return response()->json([
-                'message' => 'Rôle non reconnu pour cet utilisateur',
-            ], 403);
-        }
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'roles' => $roles,
+            'user' => $user,
+            'expires_in' => auth()->guard('api')->factory()->getTTL() * 60, // Expiration en secondes
+        ]);
     }
 
     /**

@@ -2,14 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Don;
+use App\Models\User;
+use App\Models\Beneficiaire;
+use App\Models\Organisation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Reservation extends Model
 {
     use HasFactory;
+    use Notifiable;
 
-    protected $fillable = ['description', 'don_id', 'beneficiaire_id'];
+    protected $table = "reservations";
+
+    protected $guarded = [];
+    // protected $fillable = ['description', 'don_id', 'beneficiaire_id'];
 
     // Relation avec Don
     public function don()
@@ -18,10 +27,16 @@ class Reservation extends Model
     }
 
         // Relation avec le modèle User (créateur)
+        public function organisation()
+        {
+            return $this->belongsTo(Organisation::class);
+        }
+
         public function creator()
         {
             return $this->belongsTo(User::class, 'created_by');
         }
+
 
         // Relation avec le modèle User (modificateur)
         public function modifier()
@@ -34,4 +49,5 @@ class Reservation extends Model
         {
             return $this->belongsTo(Beneficiaire::class);
         }
+
 }

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->id();
             $table->text('description');
             $table->foreignIdFor(Don::class)->nullable()->constrained()->onDelete('cascade');
-            // $table->foreignIdFor(Organisation::class)->nullable()->constrained()->onDelete('cascade');
             $table->foreignIdFor(Beneficiaire::class)->nullable()->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();

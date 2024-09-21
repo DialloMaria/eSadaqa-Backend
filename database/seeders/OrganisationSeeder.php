@@ -36,7 +36,7 @@ class OrganisationSeeder extends Seeder
             'logo' => 'organisation-logo.png',
             'date_creation' => '2020-05-20',
             'recepisse' => 'ORG-5678',
-            'password' => Hash::make('password'),
+            // 'password' => Hash::make('password'),
             'user_id' => 4,
         ]);
     }

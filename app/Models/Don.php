@@ -29,4 +29,32 @@ class Don extends Model
     {
         return $this->belongsTo(User::class, 'modified_by');
     }
+
+    public function organisation()
+    {
+        return $this->belongsTo(Organisation::class, 'organisation_id'); // Assurez-vous que 'organisation_id' est la clé étrangère correcte
+    }
+
+    const STATUS_EN_ATTENTE = 'en_attente';
+    const STATUS_RESERVE = 'reserve';
+    const STATUS_DISTRIBUE = 'distribue';
+
+
+    public function setStatusEnAttente()
+    {
+        $this->status = self::STATUS_EN_ATTENTE;
+        $this->save();
+    }
+
+    public function setStatusReserve()
+    {
+        $this->status = self::STATUS_RESERVE;
+        $this->save();
+    }
+
+    public function setStatusDistribue()
+    {
+        $this->status = self::STATUS_DISTRIBUE;
+        $this->save();
+    }
 }

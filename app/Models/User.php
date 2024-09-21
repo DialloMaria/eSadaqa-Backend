@@ -29,10 +29,10 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array<int, string>
      */
-    // protected $hidden = [
-    //     'password',
-    //     'remember_token',
-    // ];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     /**
      * Get the attributes that should be cast.
@@ -55,4 +55,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+
+    public function organisation()
+    {
+        return $this->belongsTo(Organisation::class);
+    }
+    
 }

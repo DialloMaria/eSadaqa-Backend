@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('fondateur');
             $table->date('date_creation');
             $table->string('recepisse');
-            $table->string('password')->nullable();
             $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
