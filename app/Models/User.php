@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Donateur;
+use App\Models\Beneficiaire;
+use App\Models\Organisation;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -59,7 +62,16 @@ class User extends Authenticatable implements JWTSubject
 
     public function organisation()
     {
-        return $this->belongsTo(Organisation::class);
+        return $this->hasOne(Organisation::class);
     }
-    
+
+    public function donateur()
+    {
+        return $this->hasOne(Donateur::class);
+    }
+
+    public function beneficiaire()
+    {
+        return $this->hasOne(Beneficiaire::class);
+    }
 }

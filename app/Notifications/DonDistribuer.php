@@ -6,19 +6,20 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Rapport;
 
 class DonDistribuer extends Notification
 {
     use Queueable;
 
-    public $don;
+    public $rapport;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(Rapport $rapport)
     {
-        $this->don = $don;
+        $this->rapport = $rapport;
     }
 
     /**
@@ -28,7 +29,7 @@ class DonDistribuer extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database', 'notification', 'sms'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -37,11 +38,13 @@ class DonDistribuer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject('Don distribué')
+                    ->subject('Rapport de Don Distribué')
                     ->greeting('Bonjour !')
-                    ->line('Le bénéficiaire a confirmé la réception du don ' . $this->don->libelle . '. Le don est maintenant distribué.')
-                    ->action('Voir le don', url('/dons/' . $this->don->id))
-                    ->line('Merci d\'utiliser notre plateforme !');
+                    ->line('Le bénéficiaire a confirmé la réception du don.')
+                    ->line('Vous trouverez ci-dessous les détails du rapport :')
+                    ->line($this->rapport->contenu) // Inclure le contenu du rapport
+                    ->action('Voir plus de détails', url('/rapports/' . $this->rapport->id))
+                    ->line('Merci pour votre générosité et d\'utiliser notre plateforme !');
     }
 
     /**
@@ -52,8 +55,8 @@ class DonDistribuer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'don_id' => $this->don->id,
-            'message' => 'Le bénéficiaire a bien reçu le don. Statut : distribué.',
+            'rapport_id' => $this->rapport->id,
+            'message' => 'Le bénéficiaire a bien reçu le don et un rapport a été généré.',
         ];
     }
 }

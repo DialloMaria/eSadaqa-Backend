@@ -101,21 +101,21 @@ class AuthController extends Controller
     {
         //Validation des données
         $validatedData = $request->validate([
-            // 'nom' => 'required|string|max:255',
-            // 'prenom' => 'required|string|max:255',
-            // 'email' => 'required|string|email|max:255',
-            // 'password' => 'required|string|min:6',
-            // 'adresse' => 'nullable|string|max:255',
-            // 'telephone' => 'nullable|string|max:15',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:6',
+            'adresse' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:15',
 
-            // 'nomstructure' => 'required|string|max:255',
-            // 'emailstructure' => 'required|string|email|max:255',
-            // 'fondateur' => 'required|string|max:100',
-            // 'description' => 'nullable|string',
-            // 'siege' => 'required|string|max:255',
-            // 'logo' => 'nullable|string',
-            // 'date_creation' => 'required|date',
-            // 'recepisse' => 'required|string|max:255',
+            'nomstructure' => 'required|string|max:255',
+            'emailstructure' => 'required|string|email|max:255',
+            'fondateur' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'siege' => 'required|string|max:255',
+            'logo' => 'nullable|string',
+            'date_creation' => 'required|date',
+            'recepisse' => 'required|string|max:255',
         ]);
 
         // Création de l'utilisateur
@@ -182,22 +182,22 @@ class AuthController extends Controller
     {
         //Validation des données
         $validatedData = $request->validate([
-            // 'nom' => 'required|string|max:255',
-            // 'prenom' => 'required|string|max:255',
-            // 'email' => 'required|string|email|max:255',
-            // 'password' => 'required|string|min:6',
-            // 'adresse' => 'nullable|string|max:255',
-            // 'telephone' => 'nullable|string|max:15',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:6',
+            'adresse' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:15',
 
-            // 'nomstructure' => 'required|string|max:255',
-            // 'telstructure ' => 'nullable|string|max',
-            // 'emailstructure' => 'required|string|email|max:255',
-            // 'fondateur' => 'required|string|max:100',
-            // 'description' => 'nullable|string',
-            // 'adresse' => 'required|string|max:255',
-            // 'logo' => 'nullable|string',
-            // 'date_creation' => 'required|date',
-            // 'recepisse' => 'required|string|max:255',
+            'nomstructure' => 'required|string|max:255',
+            'telstructure ' => 'nullable|string|max',
+            'emailstructure' => 'required|string|email|max:255',
+            'fondateur' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'adresse' => 'required|string|max:255',
+            'logo' => 'nullable|string',
+            'date_creation' => 'required|date',
+            'recepisse' => 'required|string|max:255',
         ]);
 
         // Création de l'utilisateur

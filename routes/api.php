@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DonController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RapportController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\TypeProduitController;
 
@@ -60,7 +62,17 @@ Route::get('/user', function (Request $request) {
 
     Route::delete ('reservation/suppression/{reservation}' , [ReservationController::class, 'destroy']);
 
-    Route::post('/reservations/{id}/confirm', [ReservationController::class, 'confirmReservation']);
+    Route::post('reservations/{id}/confirm', [ReservationController::class, 'confirmReservation']);
+
+    Route::post('reservations/{reservationId}/complete', [ReservationController::class, 'completeReservation']);
+
+    Route::post('/generate-rapport', [RapportController::class, 'generateReport']);
 
 
+    Route::post('/generate-report', [ReportController::class, 'generate']);
+
+    // Route::post('/rapport/generate', [RapportController::class, 'generateReport']);
 } );
+
+
+

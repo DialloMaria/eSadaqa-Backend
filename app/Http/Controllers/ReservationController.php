@@ -10,6 +10,7 @@ use App\Models\Organisation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use App\Notifications\DonDistribuer;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\ReservationConfirmer;
 use App\Notifications\ReservationEnAttente;
@@ -99,6 +100,8 @@ class ReservationController extends Controller
     //             'don' => $don
     //         ]);
     // }
+
+    
     public function store(Request $request)
     {
         // Vérifiez si l'utilisateur est connecté et a le rôle 'organisation'
@@ -120,6 +123,12 @@ class ReservationController extends Controller
             'don_id' => 'required|exists:dons,id',
             'beneficiaire_id' => 'required|exists:beneficiaires,id', // correction on this line
         ]);
+
+        // Vérifiez si une réservation existe déjà pour ce don
+        $existingReservation = Reservation::where('don_id', $validatedData['don_id'])->first();
+        if ($existingReservation) {
+            return response()->json(['message' => 'Une réservation existe déjà pour ce don.'], 409);
+        }
 
         // Créer la nouvelle réservation
         $reservation = new Reservation();
@@ -258,6 +267,40 @@ class ReservationController extends Controller
 
         return response()->json(['message' => 'Réservation confirmée avec succès, notification envoyée à l\'organisation.', 'don' => $don], 200);
     }
+
+
+    public function completeReservation(Request $request, $reservationId)
+    {
+        $reservation = Reservation::find($reservationId);
+        if (!$reservation) {
+            return response()->json(['message' => 'Réservation introuvable'], 404);
+        }
+
+        $validatedData = $request->validate([
+            'rapport' => 'required|string'
+        ]);
+
+        // Créer un rapport
+        $request->merge(['reservation_id' => $reservationId]); // Ajoute l'ID de réservation à la requête
+        $rapportResponse = $this->generateReport($request);
+
+        if ($rapportResponse->getStatusCode() !== 200) {
+            return $rapportResponse; // Retourne l'erreur si la génération du rapport échoue
+        }
+
+        $don = Don::find($reservation->don_id);
+        $don->setStatusDistribue();
+
+        // Sauvegarder le rapport
+        $reservation->rapport = $validatedData['rapport'];
+        $reservation->save();
+
+        return response()->json([
+            'message' => 'Don distribué et notifications envoyées.',
+            'don' => $don
+        ]);
+    }
+
 
 
     }

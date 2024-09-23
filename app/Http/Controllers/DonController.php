@@ -35,6 +35,12 @@ class DonController extends Controller
      */
     public function store(StoreDonRequest $request)
     {
+
+        // Vérifiez si l'utilisateur est connecté et a le rôle de 'donateur'
+        $user = Auth::user();
+        if (!$user || !$user->hasRole('donateur')) {
+            return response()->json(['message' => 'Accès refusé. Vous devez être un donateur pour créer un don.'], 403);
+        }
         $data = $request->validated();
 
         // Création d'une nouvelle instance de SousDomaine
@@ -118,5 +124,5 @@ class DonController extends Controller
             }
         }
 
-    
+
 }

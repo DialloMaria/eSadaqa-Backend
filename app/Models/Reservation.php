@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Don;
 use App\Models\User;
+use App\Models\Rapport;
+use App\Models\Donateur;
 use App\Models\Beneficiaire;
 use App\Models\Organisation;
 use Illuminate\Database\Eloquent\Model;
@@ -49,5 +51,18 @@ class Reservation extends Model
         {
             return $this->belongsTo(Beneficiaire::class);
         }
+
+        public function rapport()
+        {
+            return $this->belongsTo(Rapport::class);
+        }
+
+
+        public function donateur()
+        {
+            return $this->belongsTo(Donateur::class);
+        }
+
+
 
 }
