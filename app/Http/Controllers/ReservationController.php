@@ -101,7 +101,7 @@ class ReservationController extends Controller
     //         ]);
     // }
 
-    
+
     public function store(Request $request)
     {
         // Vérifiez si l'utilisateur est connecté et a le rôle 'organisation'
@@ -125,10 +125,10 @@ class ReservationController extends Controller
         ]);
 
         // Vérifiez si une réservation existe déjà pour ce don
-        $existingReservation = Reservation::where('don_id', $validatedData['don_id'])->first();
-        if ($existingReservation) {
-            return response()->json(['message' => 'Une réservation existe déjà pour ce don.'], 409);
-        }
+        // $existingReservation = Reservation::where('don_id', $validatedData['don_id'])->first();
+        // if ($existingReservation) {
+        //     return response()->json(['message' => 'Une réservation existe déjà pour ce don.'], 409);
+        // }
 
         // Créer la nouvelle réservation
         $reservation = new Reservation();
@@ -151,7 +151,7 @@ class ReservationController extends Controller
 
 
         // Notifier le donateur
-        $donateur->notify(new ReservationEnAttente($don, $organisation, $beneficiaire));
+        $donateur->notify(new ReservationEnAttente($don, $organisation, $beneficiaire,$reservation));
 
 
         // Charger les informations de la réservation, de l'organisation et du don
@@ -228,19 +228,118 @@ class ReservationController extends Controller
     }
 
 
+    // public function confirmReservation($reservationId)
+    // {
+    //     // Vérifiez si l'utilisateur est connecté et a le rôle 'donateur'
+    //     $user = Auth::user();
+    //     if (!$user || !$user->hasRole('donateur')) {
+    //         return response()->json(['message' => 'Accès refusé. Vous devez être connecté en tant que donateur.'], 403);
+    //     }
+    //     // Récupérer la réservation par son ID
+    //     $reservation = Reservation::find($reservationId);
+
+    //     // Vérifier si la réservation existe
+    //     if (!$reservation) {
+    //         return response()->json(['message' => 'Réservation introuvable'], 404);
+    //     }
+
+    //     // Récupérer le don lié à la réservation
+    //     $don = $reservation->don;
+
+    //     if (!$don) {
+    //         return response()->json(['message' => 'Don introuvable'], 404);
+    //     }
+
+    //     // Vérifier si l'utilisateur est autorisé à confirmer la réservation
+    //     if (Auth::id() !== $don->created_by) {
+    //         return response()->json(['message' => 'Vous n\'êtes pas autorisé à confirmer cette réservation'], 403);
+    //     }
+
+    //     // Mettre à jour le statut du don à 'réservé'
+    //     $don->status = 'reservé';
+    //     $don->save();
+
+    //     // Obtenir l'organisation qui a fait la réservation
+    //     $organisation = $reservation->organisation;
+
+    //     // Vérifier si l'organisation existe
+    //     if (!$organisation) {
+    //         return response()->json(['message' => 'Organisation introuvable'], 404);
+    //     }
+
+    //     // Affiche l'email de l'organisation pour vérification
+    //     \Log::info('Email de l\'organisation: ' . $organisation->email);
+
+    //     // Notifier l'organisation que la réservation est confirmée
+    //     $organisation->notify(new ReservationConfirmer($don, $reservation->beneficiaire));
+
+
+    //     // // Vérifier si l'organisation existe
+    //     // if (!$organisation) {
+    //     //     return response()->json(['message' => 'Organisation introuvable'], 404);
+    //     // }
+
+    //     // // Notifier l'organisation que la réservation est confirmée
+    //     // $organisation->notify(new ReservationConfirmer($don, $reservation->beneficiaire));
+
+    //     return response()->json(['message' => 'Réservation confirmée avec succès, notification envoyée à l\'organisation.', 'don' => $don], 200);
+    // }
+
+    // public function confirmReservation($reservationId)
+    // {
+    //     $user = Auth::user();
+    //     if (!$user || !$user->hasRole('donateur')) {
+    //         return response()->json(['message' => 'Accès refusé. Vous devez être connecté en tant que donateur.'], 403);
+    //     }
+
+    //     $reservation = Reservation::find($reservationId);
+    //     if (!$reservation) {
+    //         return response()->json(['message' => 'Réservation introuvable'], 404);
+    //     }
+
+    //     $don = $reservation->don;
+    //     if (!$don) {
+    //         return response()->json(['message' => 'Don introuvable'], 404);
+    //     }
+
+    //     if (Auth::id() !== $don->created_by) {
+    //         return response()->json(['message' => 'Vous n\'êtes pas autorisé à confirmer cette réservation'], 403);
+    //     }
+
+    //     $don->status = 'reservé';
+    //     $don->save();
+
+    //     $organisation = $reservation->organisation;
+    //     if (!$organisation) {
+    //         return response()->json(['message' => 'Organisation introuvable'], 404);
+    //     }
+
+    //     try {
+    //         \Log::info('Email de l\'organisation: ' . $organisation->email);
+    //         $organisation->notify(new ReservationConfirmer($don, $reservation->beneficiaire));
+    //         return response()->json(['message' => 'Réservation confirmée avec succès, notification envoyée à l\'organisation.', 'don' => $don], 200);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Erreur lors de l\'envoi de l\'email : ' . $e->getMessage());
+    //         return response()->json(['message' => 'Erreur lors de l\'envoi de l\'email.'], 500);
+    //     }
+    // }
+
     public function confirmReservation($reservationId)
     {
+        // Vérifiez si l'utilisateur est connecté et a le rôle 'donateur'
+        $user = Auth::user();
+        if (!$user || !$user->hasRole('donateur')) {
+            return response()->json(['message' => 'Accès refusé. Vous devez être connecté en tant que donateur.'], 403);
+        }
+
         // Récupérer la réservation par son ID
         $reservation = Reservation::find($reservationId);
-
-        // Vérifier si la réservation existe
         if (!$reservation) {
             return response()->json(['message' => 'Réservation introuvable'], 404);
         }
 
         // Récupérer le don lié à la réservation
         $don = $reservation->don;
-
         if (!$don) {
             return response()->json(['message' => 'Don introuvable'], 404);
         }
@@ -256,14 +355,20 @@ class ReservationController extends Controller
 
         // Obtenir l'organisation qui a fait la réservation
         $organisation = $reservation->organisation;
-
-        // Vérifier si l'organisation existe
         if (!$organisation) {
             return response()->json(['message' => 'Organisation introuvable'], 404);
         }
 
+        \Log::info('Envoi de notification à l\'organisation', ['organisation' => $organisation->id]);
+
         // Notifier l'organisation que la réservation est confirmée
-        $organisation->notify(new ReservationConfirmer($don, $reservation->beneficiaire));
+        try {
+            $organisation->notify(new ReservationConfirmer($don, $reservation->beneficiaire));
+            \Log::info('Notification envoyée avec succès');
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors de l\'envoi de la notification : ' . $e->getMessage());
+            return response()->json(['message' => 'Erreur lors de l\'envoi de la notification.'], 500);
+        }
 
         return response()->json(['message' => 'Réservation confirmée avec succès, notification envoyée à l\'organisation.', 'don' => $don], 200);
     }
@@ -300,9 +405,6 @@ class ReservationController extends Controller
             'don' => $don
         ]);
     }
-
-
-
     }
 
 

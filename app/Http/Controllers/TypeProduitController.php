@@ -47,7 +47,12 @@ class TypeProduitController extends Controller
      */
     public function show(TypeProduit $typeProduit)
     {
-        //
+        // Retourner les détails complets du produit
+        return $this->customJsonResponse("Détails du produit récupérés avec succès", [
+            'id' => $typeProduit->id,
+            'libelle' => $typeProduit->libelle,
+            'quantite' => $typeProduit->quantite
+        ]);
     }
 
     /**

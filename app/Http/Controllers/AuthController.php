@@ -24,11 +24,11 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
             'adresse' => 'nullable|string|max:255',
             'telephone' => 'nullable|string|max:15',
-            'nomstructure' => 'required|string|max:255',
-            'emailstructure' => 'required|string|email|max:255',
+            'nomstructure' => 'nullable|string|max:255',
+            'emailstructure' => 'nullable|string|email|max:255',
             'description' => 'nullable|string',
-            'typestructure' => 'required|in:micro,macro',
-            'siege' => 'required|string|max:255',
+            'typestructure' => 'nullable|in:micro,macro',
+            'siege' => 'nullable|string|max:255',
             'logo' => 'nullable|string',
             'date_creation' => 'required|date',
             'recepisse' => 'required|string|max:255',
@@ -94,6 +94,59 @@ class AuthController extends Controller
             ]
         ], 201);
     }
+
+    public function registerDonateurP(Request $request)
+    {
+        //Validation des données
+        $validatedData = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:6',
+            'adresse' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:15',
+
+        ]);
+
+
+        // Vérification si la validation a échoué
+        // if ($validatedData->fails()) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'errors' => $validatedData->errors(),
+        //     ], 422);
+        // }
+
+
+        // Création de l'utilisateur
+        $user = User::create([
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'adresse' => $request->adresse,
+            'telephone' => $request->telephone ?? null,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Assignation du rôle donateur
+        $user->assignRole('donateur');
+
+        //Mise en place des infos suplementaire
+
+
+        // Obtenez les rôles de l'utilisateur
+        $roles = $user->getRoleNames();
+
+        // Réponse JSON personnalisée
+        return response()->json([
+            'success' => true,
+            'message' => "Hello $user->prenom , Votre inscription c fait avec succès",
+            'user' => $user,
+            'roles' => $roles, // Inclure les rôles dans la réponse,
+
+        ], 201);
+    }
+
 
 
     //Register pour les organisation
@@ -260,6 +313,37 @@ class AuthController extends Controller
             ]
         ], 201);
     }
+
+    
+    public function listBeneficiaires()
+    {
+        // Vérifiez si l'utilisateur est authentifié
+        if (!auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Utilisateur non authentifié.'
+            ], 401);
+        }
+
+        // Récupérer tous les bénéficiaires et charger les informations de l'utilisateur associé
+        $beneficiaires = Beneficiaire::with('user')->get();
+
+        // Vérifiez s'il y a des bénéficiaires
+        if ($beneficiaires->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Aucun bénéficiaire trouvé.',
+            ], 404);
+        }
+
+        // Réponse JSON avec la liste des bénéficiaires
+        return response()->json([
+            'success' => true,
+            'beneficiaires' => $beneficiaires
+        ], 200);
+    }
+
+
 
     // LOGIN
     // public function login(Request $request)

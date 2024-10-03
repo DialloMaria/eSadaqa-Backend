@@ -13,10 +13,12 @@ class ReservationEnAttente extends Notification
     public $don;
     public $organisation;
     public $beneficiaire;
+    public $reservation;
 
-    public function __construct($don, $organisation, $beneficiaire)
+    public function __construct($don, $organisation, $beneficiaire, $reservation)
     {
         $this->don = $don;
+        $this->reservation = $reservation;
         $this->organisation = $organisation;
         $this->beneficiaire = $beneficiaire;
     }
@@ -42,6 +44,7 @@ class ReservationEnAttente extends Notification
                         ->line('Une nouvelle réservation sur le don ' . $this->don->libelle . ' est en attente de votre confirmation.')
                         ->line('Organisation : ' . ($this->organisation ? $this->organisation->nomstructure : 'Inconnue'))
                         ->line('Bénéficiaire : ' . ($this->beneficiaire ? $this->beneficiaire->nomstructure : 'Inconnu'))
+                        ->line('reservation  : ' . ($this->reservation ? $this->reservation ->id: 'inconnu'))
                         ->action('Voir la réservation', url('/dons/' . $this->don->id))
                         ->line('Merci d\'utiliser notre plateforme !');
     }
@@ -58,6 +61,7 @@ class ReservationEnAttente extends Notification
             'message' => 'Une nouvelle réservation  est en attente de votre confirmation.',
             'organisation' => $this->organisation ? $this->organisation->nom : 'Inconnue',
             'beneficiaire' => $this->beneficiaire ? $this->beneficiaire->nomstructure : 'Inconnu',
+            'reservation' => $this->reservation ? $this->reservation->id : 'Inconnu',
         ];
     }
 }

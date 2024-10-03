@@ -8,6 +8,8 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\TypeProduitController;
+use App\Http\Controllers\NotificationController;
+;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -16,6 +18,7 @@ Route::get('/user', function (Request $request) {
 
 
     Route::post('/register/donateur', [AuthController::class, 'registerDonateur']);
+    Route::post('/register/donateur/perso', [AuthController::class, 'registerDonateurP']);
 
     Route::post('/register/organisation', [AuthController::class, 'registerOrganisation']);
 
@@ -25,25 +28,34 @@ Route::get('/user', function (Request $request) {
     Route::post('/login', [AuthController::class, 'login']);
 
 
-    Route::middleware('auth:api')->group(function() {
+Route::middleware('auth:api')->group(function() {
 
     //////////////////////////////////////////////////////////////// DONS ////////////////////////////////////////////////////////////////
 
     Route::get ('don/affichage' , [DonController::class, 'index']);
 
+    Route::get ('notification/affichage' , [NotificationController::class, 'index']);
+
     Route::post ('don/ajout' , [DonController::class, 'store']);
+
+    Route::get('/don/{don}', [DonController::class, 'show']);
 
     Route::post ('don/modification/{don}' , [DonController::class, 'update']);
 
     Route::delete ('don/suppression/{don}' , [DonController::class, 'destroy']);
 
+    Route::get('/dons/{don}/produits', [DonController::class, 'getProduitsByDon']);
+
+    Route::get('/listbeneficiaires', [AuthController::class, 'listBeneficiaires']);
 
 
     //////////////////////////////////////////////////////////////// TYPE PRODUITS ////////////////////////////////////////////////////////////////
 
     Route::get ('produit/affichage' , [TypeProduitController::class, 'index']);
 
-    Route::post ('produit/ajout' , [TypeProduitController::class, 'store']);
+    Route::post ('produit/ajout/' , [TypeProduitController::class, 'store']);
+
+    Route::get('/produit/{typeProduit}', [TypeProduitController::class, 'show']);
 
     Route::post ('produit/modification/{produit}' , [TypeProduitController::class, 'update']);
 
