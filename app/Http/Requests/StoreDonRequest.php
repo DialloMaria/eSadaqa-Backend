@@ -27,7 +27,7 @@ class StoreDonRequest extends FormRequest
             'categorie' => 'required|in:monetaire,produit',
             'status' => 'in:en_attente,approuvé,rejeté',
             'adresse' => 'required|string|max:255',
-            'image' => 'nullable|string|max:255', // URL de l'image
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }

@@ -11,10 +11,20 @@ use App\Http\Controllers\TypeProduitController;
 use App\Http\Controllers\NotificationController;
 ;
 
+
+// Route publique pour l'évolution des dons
+Route::get('/evolution', [DonController::class, 'getDonsEvolution']);
+Route::get ('produit/Fourni' , [TypeProduitController::class, 'getEvolutionProduit']);
+
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/dons/by-date', [DonController::class, 'getDonsByDate']);
+
+
+Route::get('list/organisation', [AuthController::class, 'listOrganisation']);
 
 
     Route::post('/register/donateur', [AuthController::class, 'registerDonateur']);
@@ -27,10 +37,14 @@ Route::get('/user', function (Request $request) {
 
     Route::post('/login', [AuthController::class, 'login']);
 
+    Route::post('/logout', [AuthController::class, 'logout']);
+
 
 Route::middleware('auth:api')->group(function() {
 
     //////////////////////////////////////////////////////////////// DONS ////////////////////////////////////////////////////////////////
+
+    Route::get('list/donateurs/structures', [AuthController::class, 'listDonateursStructures']);
 
     Route::get ('don/affichage' , [DonController::class, 'index']);
 
@@ -47,6 +61,10 @@ Route::middleware('auth:api')->group(function() {
     Route::get('/dons/{don}/produits', [DonController::class, 'getProduitsByDon']);
 
     Route::get('/listbeneficiaires', [AuthController::class, 'listBeneficiaires']);
+
+    // Route::get('/dons/by-date', [DonController::class, 'getDonsByDate']);
+
+
 
 
     //////////////////////////////////////////////////////////////// TYPE PRODUITS ////////////////////////////////////////////////////////////////
@@ -67,6 +85,8 @@ Route::middleware('auth:api')->group(function() {
     //////////////////////////////////////////////////////////////// RESERVATIONS ////////////////////////////////////////////////////////////////
 
     Route::get ('reservation/affichage' , [ReservationController::class, 'index']);
+
+    Route::get ('reservation/affichageByDonateur' , [ReservationController::class, 'ReservationByDonateur']);
 
     Route::post ('reservation/ajout' , [ReservationController::class, 'store']);
 

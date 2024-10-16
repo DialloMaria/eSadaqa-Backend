@@ -7,16 +7,19 @@ use App\Models\Donateur;
 use App\Models\Beneficiaire;
 use App\Models\Organisation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+
+
     /**
      * Display a listing of the resource.
      */
     public function registerDonateur(Request $request)
     {
-        //Validation des données
+        // Validation des données
         $validatedData = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
@@ -29,20 +32,29 @@ class AuthController extends Controller
             'description' => 'nullable|string',
             'typestructure' => 'nullable|in:micro,macro',
             'siege' => 'nullable|string|max:255',
-            'logo' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validation de l'image pour le logo
             'date_creation' => 'required|date',
-            'recepisse' => 'required|string|max:255',
+            'recepisse' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Validation de l'image pour le récepissé
+            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Validation de l'image pour la photo de profil
         ]);
 
+        // Gestion de l'upload de la photo de profil
+        $photoProfilePath = 'path/to/placeholder.jpg'; // Chemin par défaut
+        if ($request->hasFile('photo_profile')) {
+            $photoProfilePath = $request->file('photo_profile')->store('profiles', 'public'); // Stocke dans le dossier 'profiles' du disque public
+        }
 
-        // Vérification si la validation a échoué
-        // if ($validatedData->fails()) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'errors' => $validatedData->errors(),
-        //     ], 422);
-        // }
+        // Gestion de l'upload du logo
+        $logoPath = null;
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('logos', 'public'); // Stocke dans le dossier 'logos' du disque public
+        }
 
+        // Gestion de l'upload du récepissé
+        $recepissePath = null;
+        if ($request->hasFile('recepisse')) {
+            $recepissePath = $request->file('recepisse')->store('recepisses', 'public'); // Stocke dans le dossier 'recepisses' du disque public
+        }
 
         // Création de l'utilisateur
         $user = User::create([
@@ -52,22 +64,22 @@ class AuthController extends Controller
             'telephone' => $request->telephone ?? null,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'photo_profile' => $photoProfilePath
         ]);
 
         // Assignation du rôle donateur
         $user->assignRole('donateur');
 
-        //Mise en place des infos suplementaire
+        // Mise en place des infos supplémentaires
         $donateur = Donateur::create([
-            'nomstructure' => $request-> nomstructure,
-            'emailstructure' => $request-> emailstructure,
+            'nomstructure' => $request->nomstructure,
+            'emailstructure' => $request->emailstructure,
             'description' => $request->description ?? null,
-            'typestructure' => $request-> typestructure,
+            'typestructure' => $request->typestructure,
             'siege' => $request->siege,
-            'logo' => $request->logo ?? null,
-            'date_creation' => $request-> date_creation,
-            'recepisse' => $request-> recepisse,
-            // 'password' => Hash::make($request->password),
+            'logo' => $logoPath,
+            'date_creation' => $request->date_creation,
+            'recepisse' => $recepissePath,
             'user_id' => $user->id,  // Lien avec la table users
         ]);
 
@@ -77,7 +89,7 @@ class AuthController extends Controller
         // Réponse JSON personnalisée
         return response()->json([
             'success' => true,
-            'message' => "Hello $user->prenom , Votre inscription c fait avec succès",
+            'message' => "Hello $user->prenom , Votre inscription s'est faite avec succès",
             'user' => $user,
             'roles' => $roles, // Inclure les rôles dans la réponse,
             'structure' => [
@@ -90,10 +102,10 @@ class AuthController extends Controller
                 'logo' => $donateur->logo,
                 'date_creation' => $donateur->date_creation,
                 'recepisse' => $donateur->recepisse,
-                'password' => Hash::make($request->password)// Mot de passe non affiché pour sécurité''
             ]
         ], 201);
     }
+
 
     public function registerDonateurP(Request $request)
     {
@@ -105,18 +117,14 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
             'adresse' => 'nullable|string|max:255',
             'telephone' => 'nullable|string|max:15',
-
+            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Validation de l'image
         ]);
 
-
-        // Vérification si la validation a échoué
-        // if ($validatedData->fails()) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'errors' => $validatedData->errors(),
-        //     ], 422);
-        // }
-
+        // Gestion de l'upload de la photo de profil
+        $photoProfilePath = 'path/to/placeholder.jpg'; // Chemin par défaut
+        if ($request->hasFile('photo_profile')) {
+            $photoProfilePath = $request->file('photo_profile')->store('profiles', 'public'); // Stocke dans le dossier 'profiles' du disque public
+        }
 
         // Création de l'utilisateur
         $user = User::create([
@@ -126,6 +134,7 @@ class AuthController extends Controller
             'telephone' => $request->telephone ?? null,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'photo_profile' => $photoProfilePath
         ]);
 
         // Assignation du rôle donateur
@@ -169,7 +178,14 @@ class AuthController extends Controller
             'logo' => 'nullable|string',
             'date_creation' => 'required|date',
             'recepisse' => 'required|string|max:255',
+            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Validation de l'image
         ]);
+
+        // Gestion de l'upload de la photo de profil
+        $photoProfilePath = 'path/to/placeholder.jpg'; // Chemin par défaut
+        if ($request->hasFile('photo_profile')) {
+            $photoProfilePath = $request->file('photo_profile')->store('profiles', 'public'); // Stocke dans le dossier 'profiles' du disque public
+        }
 
         // Création de l'utilisateur
         $user = User::create([
@@ -179,6 +195,8 @@ class AuthController extends Controller
             'telephone' => $request->telephone ?? null,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'photo_profile' => $photoProfilePath
+
         ]);
 
         // Assignation du rôle donateur
@@ -251,7 +269,14 @@ class AuthController extends Controller
             'logo' => 'nullable|string',
             'date_creation' => 'required|date',
             'recepisse' => 'required|string|max:255',
+            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Validation de l'image
         ]);
+
+        // Gestion de l'upload de la photo de profil
+        $photoProfilePath = 'path/to/placeholder.jpg'; // Chemin par défaut
+        if ($request->hasFile('photo_profile')) {
+            $photoProfilePath = $request->file('photo_profile')->store('profiles', 'public'); // Stocke dans le dossier 'profiles' du disque public
+        }
 
         // Création de l'utilisateur
         $user = User::create([
@@ -261,6 +286,8 @@ class AuthController extends Controller
             'telephone' => $request->telephone ?? null,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'photo_profile' => $photoProfilePath
+
         ]);
 
         // Assignation du rôle donateur
@@ -314,7 +341,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    
+
     public function listBeneficiaires()
     {
         // Vérifiez si l'utilisateur est authentifié
@@ -449,7 +476,52 @@ class AuthController extends Controller
         ]);
     }
 
+    // logout
+      public function logout()
+    {
+        Auth::guard('api')->logout();
+        return response()->json(['message' => 'Déconnexion réussie.'], 200);
+    }
+
+
+
+
+// LA LISTES DES DE TOUS LES USERS
+
+public function listDonateursStructures()
+{
+    // Récupération des donateurs qui sont des structures
+    $donateursStructures = Donateur::all(); // Inclure les informations de l'utilisateur associé
+
+    // Réponse JSON
+    return response()->json([
+        'success' => true,
+        'donateurs_structures' => $donateursStructures,
+    ], 200);
+}
+
+public function listOrganisation()
+{
+
+    // $user = Auth::user();
+    // if (!$user || !$user->hasRole('admin')) {
+    //     return response()->json(['message' => 'Accès refusé. Vous devez être un admin pour créer consulté la liste des organisations.'], 403);
+    // }
+
+    // Récupération des donateurs qui sont des structures
+    // $listOrganisation = Organisation::all(); // Inclure les informations de l'utilisateur associé
+    // Récupérer tous les bénéficiaires et charger les informations de l'utilisateur associé
+    $listOrganisation = Organisation::with('user')->get();
+
+
+    // Réponse JSON
+    return response()->json([
+        'success' => true,
+        'donateurs_structures' => $listOrganisation,
+    ], 200);
+}
 
 
 }
+
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Don;
 use App\Models\TypeProduit;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreDonRequest;
@@ -171,6 +172,46 @@ class DonController extends Controller
             'data' => $produits
         ], 200);
     }
+
+
+        // Méthode pour récupérer les dons publiés à une date donnée
+        public function getDonsByDate(Request $request)
+        {
+            $date = $request->query('date'); // Récupérer la date depuis les paramètres de requête
+
+            // Validation de la date
+            if (!$date || !strtotime($date)) {
+                return response()->json(['error' => 'Date invalide'], 400);
+            }
+
+            // Récupérer les dons publiés à cette date
+            $dons = Don::whereDate('created_at', $date)->get();
+
+            // Retourner les dons
+            return response()->json(['data' => $dons], 200);
+        }
+
+
+
+        /**
+ * Récupérer l'évolution des dons par intervalles de 5 jours.
+ */
+public function getDonsEvolution()
+{
+    // Définir la période pour l'évolution des dons (ex : dernier mois)
+    $startDate = now()->subDays(30); // 30 jours en arrière
+    $endDate = now();
+
+    // Récupérer les dons groupés par date et compter le nombre de dons
+    $dons = Don::selectRaw('DATE(created_at) as date, COUNT(*) as total')
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
+
+    return response()->json($dons);
+}
+
 
 
 }

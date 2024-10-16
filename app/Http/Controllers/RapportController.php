@@ -24,7 +24,7 @@ class RapportController extends Controller
             }
 
             // Récupérer la réservation via l'ID passé en paramètre
-            $reservation = Reservation::find($request->input('reservation_id'));
+            $reservation = Reservation::find($request->input('php '));
             if (!$reservation) {
                 return response()->json(['error' => 'Réservation introuvable.'], 404);
             }

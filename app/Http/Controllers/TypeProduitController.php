@@ -16,6 +16,12 @@ class TypeProduitController extends Controller
     {
         $produit = TypeProduit::all();
         // $don = TytpeProduit::with(['creator', 'modifier'])->get();
+        // $produit = TypeProduit::select('libelle', 'quantite')->get();
+        return $this->customJsonResponse("Don retrieved successfully", $produit);
+    }
+
+    public function getEvolutionProduit(){
+        $produit = TypeProduit::select('libelle', 'quantite')->get();
         return $this->customJsonResponse("Don retrieved successfully", $produit);
     }
 
